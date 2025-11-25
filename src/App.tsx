@@ -29,6 +29,19 @@ const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzBsgNrkuieq
 const GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1V6CAPIIcmUB5wtxyzvYNRWW_YOFBU3v6JZ0cp7EpJtg/edit';
 
 const App: React.FC = () => {
+    // Force initialize users on mount to ensure admin exists
+    useEffect(() => {
+        // accessing getUsers will trigger initialization if empty
+        const existingUsers = auth.getUsers();
+        if (existingUsers.length === 0) {
+            // This logic is also inside auth.ts, but calling it here ensures it runs in the react lifecycle
+            console.log("Initializing default users...");
+            // The auth.ts file has self-executing code, but we can force a check/reload here if needed.
+            // For now, just let state update catch it.
+            setUsers(auth.getUsers());
+        }
+    }, []);
+
     // User Auth State
     const [currentUser, setCurrentUser] = useState<User | null>(() => auth.getCurrentUser());
     const [users, setUsers] = useState<User[]>(() => auth.getUsers());
@@ -748,7 +761,7 @@ const App: React.FC = () => {
 
                     <Dashboard stats={
                         (() => {
-                             const check = (m: Member) => getCoreRequiredDocuments(m.memberType).every(d => m.documents[d.name]);
+                             const check = (m: Member) => getCoreRequiredDocuments(m.memberType).every((d: any) => m.documents[d.name]);
                              // Fix: Add explicit type to reducer
                              const initial = Object.values(MemberType).reduce((acc: any, t) => ({...acc, [t as string]: {total:0, complete:0, pending:0, incomplete:0}}), {} as any);
                              const breakdown = members.reduce((acc: any, m) => {
