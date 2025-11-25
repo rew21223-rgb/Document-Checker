@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
-import { GoogleIcon, CheckCircleIcon } from './icons';
-import * as gsheet from '../../googleApi';
+import { GoogleIcon } from './icons';
+import * as gsheet from '../googleApi';
 
 interface GoogleSheetSetupProps {
   currentScriptUrl?: string | null;

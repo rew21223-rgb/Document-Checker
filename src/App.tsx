@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Member, MemberType, FilterStatus, User, UserRole, DocumentHistoryLog, AppNotification, AppConfig } from './types';
 import { getRequiredDocuments, getCoreRequiredDocuments } from './constants';
@@ -102,7 +101,6 @@ const App: React.FC = () => {
     const [editingMemberDetails, setEditingMemberDetails] = useState<MemberWithRow | null>(null);
     const [deletingMember, setDeletingMember] = useState<MemberWithRow | null>(null);
     const [viewingHistoryMember, setViewingHistoryMember] = useState<Member | null>(null);
-    const [isClearDataModalOpen, setClearDataModalOpen] = useState(false);
 
     const isOnline = useMemo(() => 
         !!(scriptUrl && !isOfflineMode), 
@@ -580,7 +578,7 @@ const App: React.FC = () => {
                      updateCount++;
                  } else {
                      const requiredDocs = getRequiredDocuments(imported.memberType);
-                     const documents = requiredDocs.reduce((acc: Record<string, boolean>, doc) => ({ ...acc, [doc.name]: false }), {});
+                     const documents = requiredDocs.reduce((acc, doc) => ({ ...acc, [doc.name]: false }), {});
                      
                      updatedMembersList.push({
                          ...imported,
@@ -607,7 +605,6 @@ const App: React.FC = () => {
         if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลในเครื่องทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้')) {
             localStorage.removeItem('local_members');
             setMembers([]);
-            setClearDataModalOpen(false);
             addNotification('warning', 'ล้างข้อมูลในเครื่องทั้งหมดเรียบร้อยแล้ว');
         }
     }
@@ -841,7 +838,7 @@ const App: React.FC = () => {
                                     const m4 = filterIssuer === '' || (m.documentIssuer && m.documentIssuer.toLowerCase().includes(filterIssuer.toLowerCase()));
                                     const m5 = filterAuditor === '' || (m.auditor && m.auditor.toLowerCase().includes(filterAuditor.toLowerCase()));
                                     return m1 && m2 && m3 && m4 && m5;
-                                 }).length
+                                }).length
                             }
                             itemsPerPage={itemsPerPage}
                             onPageChange={setCurrentPage}
