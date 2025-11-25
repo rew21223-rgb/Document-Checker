@@ -1,7 +1,7 @@
 
 import React, { useRef } from 'react';
-import { MemberType, FilterStatus, User, UserRole } from '../../types';
-import { MemberWithRow } from '../../googleApi';
+import { MemberType, FilterStatus, User, UserRole } from '../types';
+import { MemberWithRow } from '../googleApi';
 import { PlusIcon, UploadIcon, DownloadIcon, PrintIcon, SearchIcon, PDFIcon, LogoutIcon, UsersIcon, CogIcon, GoogleIcon, ClipboardListIcon } from './icons';
 
 declare const XLSX: any;
