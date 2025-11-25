@@ -1,25 +1,39 @@
-
 import { User, UserRole } from './types';
 
 const USERS_STORAGE_KEY = 'document_checker_users';
 
+// Define default users constant for reuse and restoration
+const DEFAULT_USERS: User[] = [
+    { id: '1', username: 'admin', password: 'admin', role: UserRole.Admin },
+    { id: '2', username: 'reviewer', password: '123', role: UserRole.Reviewer },
+    { id: '3', username: 'staff', password: '123', role: UserRole.Reviewer },
+];
+
 // Initialize with default users if none exist in localStorage
-const initializeUsers = (): void => {
-    if (!localStorage.getItem(USERS_STORAGE_KEY)) {
-        const defaultUsers: User[] = [
-            { id: '1', username: 'admin', password: 'admin', role: UserRole.Admin },
-            { id: '2', username: 'reviewer1', password: '123', role: UserRole.Reviewer },
-            { id: '3', username: 'reviewer2', password: '123', role: UserRole.Reviewer },
-        ];
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(defaultUsers));
+export const initializeUsers = (): void => {
+    const existing = localStorage.getItem(USERS_STORAGE_KEY);
+    if (!existing || JSON.parse(existing).length === 0) {
+        console.log("System: Initializing default users...");
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
     }
 };
 
+// Function to force reset users to default (useful for admin to recover system)
+export const resetToDefaultUsers = (): void => {
+    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
+};
+
+// Auto-run initialization when this module is loaded
 initializeUsers();
 
 export const getUsers = (): User[] => {
     const usersJson = localStorage.getItem(USERS_STORAGE_KEY);
-    return usersJson ? JSON.parse(usersJson) : [];
+    // Double check if empty, if so re-initialize immediately
+    if (!usersJson) {
+        initializeUsers();
+        return DEFAULT_USERS;
+    }
+    return JSON.parse(usersJson);
 };
 
 const saveUsers = (users: User[]): void => {
